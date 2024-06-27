@@ -1,9 +1,10 @@
 const express = require('express');
 const path = require('path');
 const { Pool } = require('pg');
+const cors = require('cors');  
 const app = express();
 const PORT = 3000;
-
+app.use(cors()); 
 const pool = new Pool({
     user: 'jabetanc_user_bdvisorweb',
     host: 'postgresql-jabetanc.alwaysdata.net',
@@ -94,10 +95,12 @@ app.get('/lista_capas', async (req, res) => {
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
+    console.log("Solicitud recibida para la página principal");
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/landing', (req, res) => {
+    console.log("Solicitud recibida para la página principal");
     res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
 
@@ -161,6 +164,7 @@ app.post('/login', async (req, res) => {
     const { cedula, contrasena } = req.body;
     try {
         const result = await pool.query('SELECT * FROM public.login WHERE cedula = $1 AND contrasena = $2', [cedula, contrasena]);
+        console.log(result);
         if (result.rows.length > 0) {
             res.json({ mensaje: "Inicio de sesión exitoso" });
         } else {
