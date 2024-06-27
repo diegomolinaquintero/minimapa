@@ -1,0 +1,27 @@
+{
+  "name": "conexion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "chai": "^5.0.0",
+    "eslint": "^8.56.0",
+    "express": "^4.18.2",
+    "jsdom": "^23.1.0",
+    "leaflet": "^1.9.4",
+    "leaflet-image": "^0.4.0",
+    "mapbox.js": "^3.3.1",
+    "mocha": "^10.2.0",
+    "mversion": "^2.0.1",
+    "pg": "^8.11.3",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {},
+  "description": ""
+}

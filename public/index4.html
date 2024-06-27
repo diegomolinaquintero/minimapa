@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- descargamo slos JS y los CSS de leaflet-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+    <title>Mi Mapa</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">   
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+
+    <!-- Minimapa --> 
+    <link rel="stylesheet" type="text/css" href="Leaflet-MiniMap-master/dist/Control.MiniMap.min.css">
+    
+
+    <title>Mapa Julian</title>
+
+    <style>
+        @media (min-width: 992px) { 
+            .navbar-expand-lg .navbar-nav .nav-item {
+                flex-direction: row;
+            }
+        }
+        .navbar-custom {
+            margin-right: 100px; /* Ajusta este valor según tus necesidades */
+        }
+    </style>
+</head>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="https://nucleosdemadera.com/wp-content/uploads/2023/02/cropped-LOGO-WEB-01.png" alt="Logo" width="200" class="d-inline-block align-text-top">
+            </a>
+            <ul class="navbar-nav navbar-custom">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Núcleos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <!-- Los núcleos se insertarán aquí -->
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="fincasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Fincas
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="fincasDropdown">
+                        <!-- Las fincas se insertarán aquí -->
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+
+<!-- MArco central, aca se suvdivide en columnas que son las que van a tener lainformacion de la zona de trabajo -->
+
+<body>
+   <h1>VISOR FORESTAL  </h1> 
+
+
+   <div class="container-fluid">
+    
+    <div class="container text-center">
+        <div class="row">
+          <div class="col-8">
+            <div id="map" style="width: 100%; height: 75vh;"></div>
+          </div>
+          <div class="col-4">
+            
+            
+            <div id="controls">
+                <select id="layer-select">
+
+                    <option value="Parcelas_Yolombo_WGS84">Parcelas Yolombo</option>
+                    <option value="Dreanjes_Yolombo_WGS84">Drenajes Yolombo</option>
+                    <option value="Catastrales_Yolombo_WGS84">Catastrales Yolombo</option>                  
+                    <option value="Usos_Yolombo_WGS84">Usos Suelo Yolombo</option>
+                    <!-- Agrega más opciones según tus capas disponibles -->
+                </select>
+
+                <select id="filter-field-select">
+                    <!-- Los campos se cargarán dinámicamente -->
+                </select>
+                <div>
+                    <select id="multiSelectField" multiple>
+                        <!-- Las opciones se llenarán dinámicamente -->
+                    </select>
+
+
+
+                    
+                </div>
+
+
+                
+            </div>  
+
+        </div>
+
+     </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+   <script>
+
+
+
+        //  estos son  núcleos
+        const nucleos = ['Yarumal', 'Yolombo', 'Caldas', 'Prado'];
+
+        // Función para cargar núcleos en el dropdown
+        function cargarNucleos() {
+            const nucleosDropdown = document.querySelector('#navbarDropdownMenuLink').nextElementSibling;
+            nucleos.forEach(nucleo => {
+                let a = document.createElement('a');
+                a.classList.add('dropdown-item');
+                a.href = '#';
+                a.textContent = nucleo;
+                a.onclick = function() { cargarFincas(nucleo); };
+                nucleosDropdown.appendChild(a);
+            });
+        }
+
+        // Función para cargar fincas desde el servidor
+        const zoomLevel = 13; //  ajustar este número según  necesidades
+
+        function cargarFincas(nucleo) {
+    fetch(`/fincas/${nucleo}`)
+        .then(response => response.json())
+        .then(data => {
+            const fincasDropdown = document.querySelector('#fincasDropdown').nextElementSibling;
+            fincasDropdown.innerHTML = ''; // Limpiar fincas anteriores
+            data.forEach(finca => {
+                let a = document.createElement('a');
+                a.classList.add('dropdown-item');
+                a.href = '#';
+                a.textContent = finca.finca;
+                a.onclick = function() { 
+                    const centroide = finca.centroide.coordinates;
+                    mymap.setView([centroide[1], centroide[0]], zoomLevel); // Ajusta 'zoomLevel' según tus necesidades
+
+                    // Crear y abrir un popup en las coordenadas de la finca
+                    L.popup()
+                        .setLatLng([centroide[1], centroide[0]])
+                        .setContent("Nombre de la finca: " + finca.finca)
+                        .openOn(mymap);
+                };
+                fincasDropdown.appendChild(a);
+            });
+        });
+}
+
+
+
+
+        // Cargar núcleos al cargar la página
+        window.onload = cargarNucleos;  
+
+
+// Empieza carga de mapa
+
+
+        var mymap = L.map('map').setView([6.730490372, -75.055143587], 12);
+        var geoJsonLayer; // Esta variable mantendrá la capa actual de GeoJSON
+        var rawData; // Almacenará los datos crudos de GeoJSON
+
+
+        L.control.locate({locateOptions: {maxZoom: 19, position: 'bottomright'}}).addTo(mymap);
+
+        
+
+        
+        var OpenStreetMap_Mapnik = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+
+    var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+});
+
+var Stadia_StamenWatercolor = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}', {
+	minZoom: 1,
+	maxZoom: 16,
+	attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	ext: 'jpg'
+});
+
+var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+	maxZoom: 17,
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+    
+    document.getElementById('layer-select').addEventListener('change', function(e) {
+        var selectedLayer = e.target.value;
+        loadLayer(selectedLayer);
+        fetchFieldsForLayer(selectedLayer);
+    });
+
+    document.getElementById('filter-field-select').addEventListener('change', function(e) {
+        var selectedLayer = document.getElementById('layer-select').value;
+        var selectedField = e.target.value;
+        fetchValuesForField(selectedLayer, selectedField);
+    });
+
+    document.getElementById('multiSelectField').addEventListener('change', function() {
+        applyFilters();
+    });
+
+    function loadLayer(layerName) {
+        fetch(`/data/${layerName}`)
+            .then(response => response.json())
+            .then(data => {
+                rawData = data; // Almacenar datos crudos
+                applyFilters(); // Aplicar filtros a los nuevos datos
+            })
+            .catch(error => console.error('Error al cargar la capa:', error));
+    }
+
+        function fetchFieldsForLayer(layerName) {
+            fetch(`/fields/${layerName}`)
+                .then(response => response.json())
+                .then(fields => {
+                    const fieldSelect = document.getElementById('filter-field-select');
+                    fieldSelect.innerHTML = '';
+                    fields.forEach(field => {
+                        const option = document.createElement('option');
+                        option.value = field;
+                        option.text = field;
+                        fieldSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error al cargar campos:', error));
+        }
+
+        function fetchValuesForField(layerName, fieldName) {
+            fetch(`/values/${layerName}/${fieldName}`)
+                .then(response => response.json())
+                .then(values => {
+                    const multiSelectField = document.getElementById('multiSelectField');
+                    multiSelectField.innerHTML = '';
+
+                    values.forEach(value => {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = value;
+                        multiSelectField.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error al cargar valores:', error));
+        }
+
+    function applyFilters() {
+    var selectedValues = Array.from(document.getElementById('multiSelectField').selectedOptions).map(option => option.value);
+    var selectedField = document.getElementById('filter-field-select').value;
+
+    // Eliminar la capa existente
+    if (geoJsonLayer) {
+        mymap.removeLayer(geoJsonLayer);
+    }
+
+    // Filtrar rawData y crear una nueva capa GeoJSON
+    var filteredData = rawData.features.filter(function(feature) {
+        return selectedValues.length === 0 || selectedValues.includes(feature.properties[selectedField]);
+    });
+
+    geoJsonLayer = L.geoJSON(filteredData, {
+        style: getGeometryStyle, // Asegúrate de aplicar los estilos aquí también
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, getGeometryStyle(feature));
+        },
+        onEachFeature: onEachFeature
+    }).addTo(mymap);
+}
+
+
+        function onEachFeature(feature, layer) {
+            if (feature.properties) {
+                var popupContent = "<table class='popup-table'>";
+                
+                for (var key in feature.properties) {
+                    if (key !== 'geom' && key !== 'id') {
+                        popupContent += `<tr><td>${key}</td><td>${feature.properties[key]}</td></tr>`;
+                    }
+                }
+
+                popupContent += "</table>";
+                layer.bindPopup(popupContent, {maxWidth: "auto"});
+            }
+        }
+
+        loadLayer(document.getElementById('layer-select').value);
+
+        var baseMaps = {
+            "OSM INK": OpenStreetMap_Mapnik,
+            "OSM_HOT": OpenStreetMap_HOT,
+            "Stadia Acuarela": Stadia_StamenWatercolor,
+            "OSM Topografia": OpenTopoMap,
+            "ESRI Imagen Satelital": Esri_WorldImagery,
+            
+            
+        };
+
+        // Capas superpuestas
+        var overlayMaps = {};
+
+       // Lista de capas que deseas omitir
+       const capasOmitidas = ['spatial_ref_sys', 'geography_columns', 'geometry_columns']; // Reemplaza con los nombres de tus capas omitidas
+
+
+fetch('http://localhost:3000/lista_capas')
+    .then(response => response.json())
+    .then(listaCapas => {
+        listaCapas.forEach(nombreCapa => {
+            // Verificar si la capa no está en la lista de capas omitidas
+            if (!capasOmitidas.includes(nombreCapa)) {
+                // Crear una capa vacía inicialmente
+                overlayMaps[nombreCapa] = L.layerGroup();
+
+                // Agregar evento para cargar la capa cuando se seleccione
+                mymap.on('overlayadd', function(eventLayer){
+                    if (eventLayer.name === nombreCapa) {
+                        // Cargar datos de la capa y añadirlos a la capa correspondiente
+                        fetch(`http://localhost:3000/data/${nombreCapa}`)
+                            .then(response => response.json())
+                            .then(datosCapa => {
+                                L.geoJSON(datosCapa, {
+                                    onEachFeature: function (feature, layer) {
+                                        // Configuraciones adicionales si necesarias
+                                    }
+                                }).addTo(overlayMaps[nombreCapa]);
+                            });
+                    }
+                });
+
+                // Agregar evento para remover la capa cuando se deseleccione
+                mymap.on('overlayremove', function(eventLayer){
+                    if (eventLayer.name === nombreCapa) {
+                        overlayMaps[nombreCapa].clearLayers();
+                    }
+                });
+            }
+        });
+
+        // Agregar el control de capas al mapa
+        L.control.layers(baseMaps, overlayMaps, {collapsed: true}).addTo(mymap);
+    })
+    .catch(error => console.error('Error al cargar la lista de capas:', error)); // Correctamente vinculado a la cadena de promesas
+
+
+
+
+   // Estilos específicos//
+
+
+        function getGeometryStyle(feature) {
+        switch (feature.geometry.type) {
+            case 'Point':
+                // Estilo para puntos
+                return { radius: 8, fillColor: "#ff7800", color: "#000", weight: 1, opacity: 1, fillOpacity: 0.8 };
+            case 'LineString':
+                // Estilo para líneas
+                return { color: "#ff7800", weight: 3, opacity: 0.65 };
+                case 'MultiLineString':
+                // Estilo para líneas
+                return { color: "#ff7800", weight: 3, opacity: 0.65 }
+            case 'Polygon':
+                // Estilo para polígonos
+                return { fillColor: "#ff7800", color: "#000", weight: 2, opacity: 1, fillOpacity: 0.5 };
+            case 'MultiPolygon':
+                // Estilo para polígonos
+                return { fillColor: "#ff7800", color: "#000", weight: 2, opacity: 1, fillOpacity: 0.5 };    
+            default:
+                return {}; // Estilo por defecto
+        }
+    }
+
+    function loadLayer(layerName) {
+        fetch(`/data/${layerName}`)
+        .then(response => response.json())
+        .then(data => {
+            rawData = data; // Inicialización de rawData
+            // ... resto del código
+            if (geoJsonLayer) {
+                mymap.removeLayer(geoJsonLayer);
+            }
+            var layerStyle = getLayerSpecificStyle(layerName);
+            geoJsonLayer = L.geoJSON(data, {
+                style: function (feature) {
+                    // Aplica primero el estilo específico de la capa
+                    return layerStyle(feature) || getGeometryStyle(feature);
+                },
+                pointToLayer: function (feature, latlng) {
+                    // Para puntos, puedes necesitar definir cómo se convierten en marcadores
+                    return L.circleMarker(latlng, getGeometryStyle(feature));
+                },
+                onEachFeature: onEachFeature
+            }).addTo(mymap);
+        })
+        .catch(error => console.error('Error al cargar la capa:', error));
+}
+
+
+
+function getLayerSpecificStyle(layerName) {
+    if (layerName === 'Parcelas_Yolombo_WGS84') {
+        return function(feature) {
+            // Estilos específicos para 'Paisaje_Sonoro'
+            // ...
+
+            function style_Parcelas_Yolombo_WGS84_3_0() {
+            return {
+                pane: 'pane_Parcelas_Yolombo_WGS84_3',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+
+    } else if (layerName === 'Dreanjes_Yolombo_WGS84') {
+        return function(feature) {
+            // Estilos específicos para 'Vias_Med'
+            // ...
+
+            function style_Dreanjes_Yolombo_WGS84_4_0() {
+            return {
+                pane: 'pane_Dreanjes_Yolombo_WGS84_4',
+                opacity: 1,
+                color: 'rgba(31,27,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+
+            
+        };
+
+    } else if (layerName === 'Catastrales_Yolombo_WGS84') {
+        return function(feature) {
+            // Estilos específicos para 'Vias_Med'
+            // ...
+            function style_Catastrales_Yolombo_WGS84_0_0(feature) {
+            switch(String(feature.properties['matricula'])) {
+                case '038-0002746':
+                    return {
+               
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,93,97,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '038-0002747':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(178,209,21,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '038-002749':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(174,49,212,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '038-009681':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(89,138,202,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(87,232,143,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+           
+
+            // Resto del código para esta función...
+        };
+    } else if (layerName === 'linderos') {
+        return function(feature) {
+            // Estilos específicos para 'Vias_Med'
+            // ...
+
+            function style_linderos_2_0() {
+            return {
+                pane: 'pane_linderos_2',
+                opacity: 1,
+                color: 'rgba(225,25,215,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+
+
+        };
+    } else if (layerName === 'Usos_Yolombo_WGS84') {
+        return function(feature) {
+            // Estilos específicos para 'Vias_Med'
+            // ...
+
+
+            function style_Usos_Yolombo_WGS84_1_0(feature) {
+            switch(String(feature.properties['especie'])) {
+                default:
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(64,203,164,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Area disponible':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,225,194,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Area talada':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,225,194,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Area via':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,41,58,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Campamento':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(158,195,45,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cantera abandonada':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,73,156,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cementerio':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(47,126,166,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cipres':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(118,151,77,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Deslizamiento':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(97,194,87,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Eucalipto':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(205,96,162,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gruta':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,19,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Guadua':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(105,248,95,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Investigacion':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(238,218,36,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Latifoliadas':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(21,48,199,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Oocarpa':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,198,36,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Oocarpa prep':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,104,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasto':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,241,57,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Rastrojo':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,134,160,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Servidumbre':
+                    return {
+          
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(162,176,175,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tecunumanii':
+                    return {
+                
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(250,145,32,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tecunumanii - Patula':
+                    return {
+               
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(96,230,190,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tecunumanii prep':
+                    return {
+               
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(83,73,196,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Vegetacion natural':
+                    return {
+               
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(170,97,37,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+
+
+        };
+    }
+
+    return null; // Sin estilo específico
+}
+
+
+         
+      
+   </script>
+ 
+ 
+// Minimapa   
+  <script src="Leaflet-MiniMap-master/dist/Control.MiniMap.min.js"></script>
+
+  <script>
+// Tu código JavaScript que utiliza Leaflet, como crear capas de mapa
+const carto_light = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+// opciones
+});
+// Otro código utilizando Leaflet
+</script>  
+
+
+
+
+</body>
+
+
+<!-- Marco inferior todolo que se ponga aca debe estar despues de la primera linea de codigo -->
+<footer>
+
+    <style type="text/css">
+        #rectangle_5 {
+            top: 321px;
+            left: -643px;
+            max-height: 200px;
+            background:rgb(5, 133, 58);
+        }
+         
+        </style>
+        <div id="rectangle_5"  >
+
+            <p>Cirpesdes de Colombia</p>
+
+
+            <img src="https://nucleosdemadera.com/wp-content/uploads/2023/02/cropped-LOGO-WEB-01.png" alt="" style="width: 100px;">
+
+
+        </div>
+
+
+
+</footer>
+</html>

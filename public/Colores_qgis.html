@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 1314px;
+            height: 856px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/Catastrales_Yolombo_WGS84_0.js"></script>
+        <script src="data/Usos_Yolombo_WGS84_1.js"></script>
+        <script src="data/linderos_2.js"></script>
+        <script src="data/Parcelas_Yolombo_WGS84_3.js"></script>
+        <script src="data/Dreanjes_Yolombo_WGS84_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[6.619009047678971,-75.11732434351389],[6.688699344154977,-75.0102591573587]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_Catastrales_Yolombo_WGS84_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nombre_fin'] !== null ? autolinker.link(feature.properties['nombre_fin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['matricula'] !== null ? autolinker.link(feature.properties['matricula'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_fid'] !== null ? autolinker.link(feature.properties['orig_fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Catastrales_Yolombo_WGS84_0_0(feature) {
+            switch(String(feature.properties['matricula'])) {
+                case '038-0002746':
+                    return {
+                pane: 'pane_Catastrales_Yolombo_WGS84_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,93,97,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '038-0002747':
+                    return {
+                pane: 'pane_Catastrales_Yolombo_WGS84_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(178,209,21,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '038-002749':
+                    return {
+                pane: 'pane_Catastrales_Yolombo_WGS84_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(174,49,212,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '038-009681':
+                    return {
+                pane: 'pane_Catastrales_Yolombo_WGS84_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(89,138,202,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_Catastrales_Yolombo_WGS84_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(87,232,143,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Catastrales_Yolombo_WGS84_0');
+        map.getPane('pane_Catastrales_Yolombo_WGS84_0').style.zIndex = 400;
+        map.getPane('pane_Catastrales_Yolombo_WGS84_0').style['mix-blend-mode'] = 'normal';
+        var layer_Catastrales_Yolombo_WGS84_0 = new L.geoJson(json_Catastrales_Yolombo_WGS84_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Catastrales_Yolombo_WGS84_0',
+            layerName: 'layer_Catastrales_Yolombo_WGS84_0',
+            pane: 'pane_Catastrales_Yolombo_WGS84_0',
+            onEachFeature: pop_Catastrales_Yolombo_WGS84_0,
+            style: style_Catastrales_Yolombo_WGS84_0_0,
+        });
+        bounds_group.addLayer(layer_Catastrales_Yolombo_WGS84_0);
+        map.addLayer(layer_Catastrales_Yolombo_WGS84_0);
+        function pop_Usos_Yolombo_WGS84_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['area_resum'] !== null ? autolinker.link(feature.properties['area_resum'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['especie'] !== null ? autolinker.link(feature.properties['especie'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['semestre'] !== null ? autolinker.link(feature.properties['semestre'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['usosuelo'] !== null ? autolinker.link(feature.properties['usosuelo'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['finca'] !== null ? autolinker.link(feature.properties['finca'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['año_aprov'] !== null ? autolinker.link(feature.properties['año_aprov'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nucleo'] !== null ? autolinker.link(feature.properties['nucleo'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['area'] !== null ? autolinker.link(feature.properties['area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['shape_leng'] !== null ? autolinker.link(feature.properties['shape_leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['año_plant'] !== null ? autolinker.link(feature.properties['año_plant'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['municipio'] !== null ? autolinker.link(feature.properties['municipio'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Usos_Yolombo_WGS84_1_0(feature) {
+            switch(String(feature.properties['especie'])) {
+                default:
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(64,203,164,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Area disponible':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,225,194,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Area talada':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,225,194,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Area via':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,41,58,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Campamento':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(158,195,45,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cantera abandonada':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,73,156,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cementerio':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(47,126,166,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cipres':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(118,151,77,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Deslizamiento':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(97,194,87,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Eucalipto':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(205,96,162,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gruta':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,19,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Guadua':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(105,248,95,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Investigacion':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(238,218,36,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Latifoliadas':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(21,48,199,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Oocarpa':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,198,36,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Oocarpa prep':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,104,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasto':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,241,57,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Rastrojo':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,134,160,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Servidumbre':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(162,176,175,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tecunumanii':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(250,145,32,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tecunumanii - Patula':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(96,230,190,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tecunumanii prep':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(83,73,196,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Vegetacion natural':
+                    return {
+                pane: 'pane_Usos_Yolombo_WGS84_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(170,97,37,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Usos_Yolombo_WGS84_1');
+        map.getPane('pane_Usos_Yolombo_WGS84_1').style.zIndex = 401;
+        map.getPane('pane_Usos_Yolombo_WGS84_1').style['mix-blend-mode'] = 'normal';
+        var layer_Usos_Yolombo_WGS84_1 = new L.geoJson(json_Usos_Yolombo_WGS84_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Usos_Yolombo_WGS84_1',
+            layerName: 'layer_Usos_Yolombo_WGS84_1',
+            pane: 'pane_Usos_Yolombo_WGS84_1',
+            onEachFeature: pop_Usos_Yolombo_WGS84_1,
+            style: style_Usos_Yolombo_WGS84_1_0,
+        });
+        bounds_group.addLayer(layer_Usos_Yolombo_WGS84_1);
+        map.addLayer(layer_Usos_Yolombo_WGS84_1);
+        function pop_linderos_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid_1'] !== null ? autolinker.link(feature.properties['objectid_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid_linder'] !== null ? autolinker.link(feature.properties['fid_linder'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid_c04abr'] !== null ? autolinker.link(feature.properties['fid_c04abr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['finca'] !== null ? autolinker.link(feature.properties['finca'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['matricula'] !== null ? autolinker.link(feature.properties['matricula'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['escritura'] !== null ? autolinker.link(feature.properties['escritura'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['hipoteca'] !== null ? autolinker.link(feature.properties['hipoteca'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ficha_pred'] !== null ? autolinker.link(feature.properties['ficha_pred'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nucleo'] !== null ? autolinker.link(feature.properties['nucleo'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_linderos_2_0() {
+            return {
+                pane: 'pane_linderos_2',
+                opacity: 1,
+                color: 'rgba(225,25,215,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_linderos_2');
+        map.getPane('pane_linderos_2').style.zIndex = 402;
+        map.getPane('pane_linderos_2').style['mix-blend-mode'] = 'normal';
+        var layer_linderos_2 = new L.geoJson(json_linderos_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_linderos_2',
+            layerName: 'layer_linderos_2',
+            pane: 'pane_linderos_2',
+            onEachFeature: pop_linderos_2,
+            style: style_linderos_2_0,
+        });
+        bounds_group.addLayer(layer_linderos_2);
+        map.addLayer(layer_linderos_2);
+        function pop_Parcelas_Yolombo_WGS84_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['oid_'] !== null ? autolinker.link(feature.properties['oid_'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['folderpath'] !== null ? autolinker.link(feature.properties['folderpath'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['symbolid'] !== null ? autolinker.link(feature.properties['symbolid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['altmode'] !== null ? autolinker.link(feature.properties['altmode'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['base'] !== null ? autolinker.link(feature.properties['base'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['snippet'] !== null ? autolinker.link(feature.properties['snippet'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['popupinfo'] !== null ? autolinker.link(feature.properties['popupinfo'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['haslabel'] !== null ? autolinker.link(feature.properties['haslabel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['labelid'] !== null ? autolinker.link(feature.properties['labelid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Parcelas_Yolombo_WGS84_3_0() {
+            return {
+                pane: 'pane_Parcelas_Yolombo_WGS84_3',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Parcelas_Yolombo_WGS84_3');
+        map.getPane('pane_Parcelas_Yolombo_WGS84_3').style.zIndex = 403;
+        map.getPane('pane_Parcelas_Yolombo_WGS84_3').style['mix-blend-mode'] = 'normal';
+        var layer_Parcelas_Yolombo_WGS84_3 = new L.geoJson(json_Parcelas_Yolombo_WGS84_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Parcelas_Yolombo_WGS84_3',
+            layerName: 'layer_Parcelas_Yolombo_WGS84_3',
+            pane: 'pane_Parcelas_Yolombo_WGS84_3',
+            onEachFeature: pop_Parcelas_Yolombo_WGS84_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Parcelas_Yolombo_WGS84_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Parcelas_Yolombo_WGS84_3);
+        map.addLayer(layer_Parcelas_Yolombo_WGS84_3);
+        function pop_Dreanjes_Yolombo_WGS84_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nombre'] !== null ? autolinker.link(feature.properties['nombre'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['shape_leng'] !== null ? autolinker.link(feature.properties['shape_leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['shape_le_1'] !== null ? autolinker.link(feature.properties['shape_le_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Dreanjes_Yolombo_WGS84_4_0() {
+            return {
+                pane: 'pane_Dreanjes_Yolombo_WGS84_4',
+                opacity: 1,
+                color: 'rgba(31,27,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Dreanjes_Yolombo_WGS84_4');
+        map.getPane('pane_Dreanjes_Yolombo_WGS84_4').style.zIndex = 404;
+        map.getPane('pane_Dreanjes_Yolombo_WGS84_4').style['mix-blend-mode'] = 'normal';
+        var layer_Dreanjes_Yolombo_WGS84_4 = new L.geoJson(json_Dreanjes_Yolombo_WGS84_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Dreanjes_Yolombo_WGS84_4',
+            layerName: 'layer_Dreanjes_Yolombo_WGS84_4',
+            pane: 'pane_Dreanjes_Yolombo_WGS84_4',
+            onEachFeature: pop_Dreanjes_Yolombo_WGS84_4,
+            style: style_Dreanjes_Yolombo_WGS84_4_0,
+        });
+        bounds_group.addLayer(layer_Dreanjes_Yolombo_WGS84_4);
+        map.addLayer(layer_Dreanjes_Yolombo_WGS84_4);
+        setBounds();
+        </script>
+    </body>
+</html>

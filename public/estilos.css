@@ -1,0 +1,224 @@
+
+        @media (min-width: 992px) {
+            .navbar-expand-lg .navbar-nav .nav-item {
+                flex-direction: row;
+            }
+        }
+
+        .navbar-custom {
+            margin-right: 100px;
+            /* Ajusta este valor según tus necesidades */
+        }
+ 
+        
+   
+        .nav-item.dropdown .nav-link {
+            /* border: 2px solid #000; */
+            background-color: rgb(52, 90, 44);
+            border: 1px solid rgb(52, 90, 44);
+            color: #fff;
+            border-radius: 8px; /* Bordes redondeados */
+            margin-right: 10px; /* Espacio a la derecha entre los botones */
+                      
+        }
+        
+        .nav-item.dropdown:hover .nav-link,
+        .nav-item.dropdown:focus-within .nav-link {
+            background-color: #fff;
+            color: rgb(52, 90, 44);
+            border: 1px solid rgb(52, 90, 44);
+            
+        }
+        
+        .dropdown-menu {
+            background-color: rgb(52, 90, 44);
+            border-radius: 8px; /* Bordes redondeados */
+        }
+        
+        .dropdown-menu a {
+            color: #fff;
+            border-radius: 8px; /* Bordes redondeados */
+        }
+       
+    
+  
+        #controls {
+            border: 2px solid #000;
+            background-color: rgb(52, 90, 44);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        #controls form {
+            margin-bottom: 0;
+        }
+
+        #controls select {
+            margin-bottom: 10px;
+        }
+  
+
+    
+        /* Estilo para el footer */
+        footer {
+            /*border: 2px solid #000;*/ /* Borde negro */
+            background-color: rgb(52, 90, 44); /* Relleno verde */
+            padding: 15px; /* Añadir un espacio interno para el contenido */
+            border-radius: 8px; /* Bordes redondeados */
+        }
+
+        /* Estilo para el texto dentro del footer */
+        footer p {
+            margin-bottom: 0; /* Eliminar el espacio inferior del párrafo */
+            color: white !important; /* Color del texto */
+        }
+  
+
+/* Personalizar el botón de alternar las capas */
+.leaflet-control-layers-toggle {
+    background-color: rgb(25, 134, 84) !important; /* Color de fondo */
+    color: white !important; /* Color del texto */
+}
+
+/* Personalizar la alineación del botón y el panel desplegable */
+.leaflet-top .leaflet-control-layers {
+    left: 41px; /* Alineación a la izquierda con un poco de margen */
+    right: auto; /* Anula cualquier estilo existente que pueda afectar la posición derecha */
+    background-color: white; /* Fondo blanco de la columna que contiene los botones */
+    padding: 4px; /* Espaciado alrededor de los botones para que el fondo blanco sea visible */
+    border-radius: 4px; /* Esquinas redondeadas para la columna */
+}
+
+/* Personalizar el panel desplegable de capas */
+.leaflet-control-layers-expanded {
+    background-color: rgb(25, 134, 84) !important; /* Color de fondo para el panel desplegable */
+    border: 1px solid black !important; /* Bordes negros */
+    border-radius: 8px; /* Esquinas redondeadas */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.65); /* Sombra de caja opcional para un poco de profundidad */
+    color: white !important; /* Color del texto */
+}
+
+/* Personalizar los elementos dentro del panel desplegable para asegurar el color del texto */
+.leaflet-control-layers-selector,
+.leaflet-control-layers-list,
+.leaflet-control-layers-separator {
+    background-color: rgb(25, 134, 84) !important; /* Mismo color de fondo para los elementos internos */
+    color: white !important; /* Color del texto */
+}
+
+/* Asegúrate de que todos los enlaces dentro del panel desplegable también tengan el color de texto adecuado */
+.leaflet-control-layers-expanded a {
+    color: white !important; /* Color del texto para los enlaces */
+}
+
+.leaflet-control-zoom-in, .leaflet-control-zoom-out{
+    margin-bottom: 2px;
+    border-radius: 8px !important;
+}       
+/* Estilos para el fondo de los botones de control */
+.leaflet-bar a 
+ {
+    background-color: rgb(25, 134, 84) !important; /* Color de fondo */
+    color: white !important; /* Color del texto */
+}
+
+.leaflet-bar a:hover{
+    background-color: rgb(21, 115, 71) !important;    
+}
+
+/* Estilos para el fondo de la barra que contiene los botones, para que sea blanco */
+.leaflet-control-zoom,
+.leaflet-control-locate {
+    background-color: white; /* Fondo blanco de la columna que contiene los botones */
+    padding: 2px 2px 1px 2px; /* Espaciado alrededor de los botones para que el fondo blanco sea visible */
+    border-radius: 4px !important;/* Esquinas redondeadas para la columna */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);   /* Sombra suave para dar profundidad */
+}
+
+/* Asegurarse de que el fondo blanco envuelva todos los botones en una columna */
+.leaflet-control {
+    clear: both; /* Esto asegura que los controles no flotarán uno al lado del otro */
+}
+
+
+/* Mover todos los controles de la esquina superior derecha a la esquina superior izquierda */
+.leaflet-top.leaflet-right {
+    right: auto; /* Remueve la alineación a la derecha */
+    left: 10px; /* Alinea a la izquierda con un margen adecuado, ajusta según sea necesario */
+}
+
+/* Si necesitas un ajuste vertical específico para el control de capas */
+.leaflet-control-layers {
+    margin-top: 10px; /* Ajusta según sea necesario para alinear verticalmente con otros botones */
+}
+
+/* Asegurarse de que el control de capas tenga el mismo estilo que los controles de zoom y geolocalización */
+.leaflet-control-layers-toggle {
+    background-color: rgb(52, 90, 44); /* Color de fondo */
+    color: white; /* Color del texto */
+    border-radius: 40px; /* Bordes redondeados */
+    /* border: 1px solid black; */
+     /* Borde negro */
+}
+
+/* Para el panel desplegable de capas */
+.leaflet-control-layers-expanded {
+    background-color: rgb(52, 90, 44); /* Color de fondo del panel desplegable */
+    color: white; /* Color del texto dentro del panel desplegable */
+    border-radius: 4px; /* Bordes redondeados del panel desplegable */
+    /* border: 1px solid black;  */
+    /* Borde negro del panel desplegable */
+    
+}
+
+
+/* Configuracion de impresion  - impresora */
+@media print {
+    body * {
+      visibility: hidden; /* Oculta todo el contenido de la página */
+    }
+    #map, #map * {
+      visibility: visible; /* Solo muestra el mapa y su contenido */
+    }
+    #map {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%; /* Opcional: ajusta al tamaño de la página */
+      height: auto; /* Ajusta la altura como necesites */
+    }
+  }
+
+
+  .print-button {
+    background-color: white; /* Fondo blanco de la columna que contiene los botones */
+    background-color: rgb(52, 90, 44); /* Color de fondo del panel desplegable */
+    color: white; /* Color del texto dentro del panel desplegable */
+    border-radius: 4px; /* Bordes redondeados del panel desplegable */
+    /*border: 1px solid black;*/ /* Borde negro del panel desplegable */
+    
+    
+}
+
+table{
+font-size: 12px;    
+}
+
+.scrollable-table {
+    display: block;
+    max-height: 280px; 
+    overflow-y: auto;
+    width: fit-content;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.scrollable-table thead tr th {
+    position: sticky;
+    top: 0;
+    z-index: 1; 
+}
+
+.scrollable-table thead tr th{
+    background-color: #d1e7dd;
+}

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <title>Núcleos - Login</title>
+    <style>
+        @media only screen and (max-width: 800px) {
+            #montana-container {
+                display: none;
+            }
+
+            #forms-container {
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+</head>
+
+<body class="container-md">
+
+    <header>
+        <nav class="navbar bg-body-tertiary" style="margin: 10px;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="https://nucleosdemadera.com/wp-content/uploads/2023/02/cropped-LOGO-WEB-01.png" alt="Logo"
+                        width="300" class="d-inline-block align-text-top">
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid" style="margin: 0;">
+        <div class="row">
+            <div class="col-8" style="height: 90%;" id="montana-container">
+                <img src="images\Montaña.jpg" style="width: 100%;" class="img-fluid" alt="Mountain Image">
+            </div>
+
+            <div class="col-4" id="forms-container">
+                <div class="bg-light p-3 rounded mt-1" id="formLogin">
+                    <form onsubmit="return login(event)">
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp">
+                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="exampleInputPassword1">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: #345a2c;">Iniciar
+                            sesión</button>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        </div>
+                        <div id="errorMessage"
+                            class="p-3 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3"
+                            style="display: none;">
+                            Su contraseña y/o usuario son incorrectos.
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-light p-3 rounded mt-3" id="formRegister">
+                    <form onsubmit="return register(event)">
+                        <div class="mb-3">
+                            <label for="exampleInputEmail2" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="exampleInputEmail2"
+                                aria-describedby="emailHelp">
+                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleId2" class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="exampleId2" aria-describedby="idHelp"
+                                oninput="validateNumberInput(this)">
+                            <div id="idHelp" class="form-text">We'll never share your id with anyone else.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword2" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="exampleInputPassword2">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"
+                            style="background-color: #345a2c;">Registrarse
+                        </button>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                            <label class="form-check-label" for="exampleCheck2">Check me out</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-light p-3 rounded mt-3" id="newUserButtonContainer">
+                    <button class="btn btn-primary w-100" id="newUserButton"> Nuevo Usuario </button>
+                </div>
+                <div class="bg-light p-3 rounded mt-3" id="returnLoginButtonContainer">
+                    <button class="btn btn-primary w-100" id="returnLoginButton"> Login </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //LOGIN REQUEST
+        //Obtener los elementos del DOM
+
+        async function login() {
+            event.preventDefault();
+
+            // Esconde el mensaje de error antes de hacer la validación
+            document.getElementById('errorMessage').style.display = 'none';
+
+            const username = document.getElementById('exampleInputEmail1');
+            const password = document.getElementById('exampleInputPassword1');
+
+            const data = {
+                cedula: username.value,
+                contrasena: password.value
+            }
+            //Validación para permitir acceder o no a la página
+            let isValid = true;
+
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                //Se bloquea el ingreso y se muestra el mensaje de error
+                if (response.status !== 200) {
+                    isValid = false
+                    document.getElementById('errorMessage').style.display = 'block'
+                }
+                //Validación de acceso
+                isValid ? window.location.href = 'index.html' : null;               
+
+                const json = await response.json();
+
+                console.log(json);
+            } catch (error) {
+                if (error) {
+                    document.getElementById('errorMessage').style.display = 'block'
+                    console.log(error);
+                }
+
+            }
+
+
+        }
+
+        //REGISTER REQUEST
+
+
+        async function register() {
+            event.preventDefault();
+
+            //Obtener los elementos del DOM
+            const newUsername = document.getElementById('exampleInputEmail2');
+            const newId = document.getElementById('exampleId2');
+            const newPassword = document.getElementById('exampleInputPassword2');
+
+            //Para validar que la cédula sean solo números
+            function validateNumberInput(input) {
+                // Elimina caracteres que no son digitos
+                input.value = input.value.replace(/\D/g, '');
+            }
+
+            const dataRegister = {
+                nombre: newUsername.value,
+                cedula: newId.value,
+                contrasena: newPassword.value
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/registro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataRegister)
+                });
+                const json = await response.json();
+                console.log(json);
+            } catch (error) {
+                throw error
+            }
+        }
+
+        //SWITCH ENTRE FORMULARIOS
+        //Obtener los elementos del DOM
+        var formLogin = document.querySelector('#formLogin');
+        var formRegister = document.querySelector('#formRegister');
+        var newUserButton = document.querySelector('#newUserButton');
+        var newUserButtonContainer = document.querySelector('#newUserButtonContainer');
+        var returnLoginButton = document.querySelector('#returnLoginButton');
+        var returnLoginButtonContainer = document.querySelector('#returnLoginButtonContainer');
+
+        //Mantener oculto formulario de Registro Incialmente
+        formRegister.style.display = 'none';
+        returnLoginButtonContainer.style.display = 'none';
+
+        //Agregar control de eventos al botón
+        newUserButton.addEventListener('click', function () {
+            formRegister.style.display = 'block';
+            formLogin.style.display = 'none';
+            newUserButtonContainer.style.display = 'none';
+            returnLoginButtonContainer.style.display = 'block';
+        });
+
+        returnLoginButton.addEventListener('click', function () {
+            formRegister.style.display = 'none';
+            formLogin.style.display = 'block';
+            newUserButtonContainer.style.display = 'block';
+            returnLoginButtonContainer.style.display = 'none';
+        });
+
+    </script>
+</body>
+
+</html>

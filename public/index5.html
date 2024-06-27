@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- descargamo slos JS y los CSS de leaflet-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"
+        charset="utf-8"></script>
+
+    <!-- Minimapa -->
+    <link rel="stylesheet" type="text/css" href="Leaflet-MiniMap-master/dist/Control.MiniMap.min.css">
+    <script src="Leaflet-MiniMap-master/dist/Control.MiniMap.min.js"></script>
+
+    <!-- estilos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <title>Mapa Julian</title>
+
+    <style>
+        @media (min-width: 992px) {
+            .navbar-expand-lg .navbar-nav .nav-item {
+                flex-direction: row;
+            }
+        }
+
+        .navbar-custom {
+            margin-right: 100px;
+            /* Ajusta este valor según tus necesidades */
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-md">
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="https://nucleosdemadera.com/wp-content/uploads/2023/02/cropped-LOGO-WEB-01.png" alt="Logo"
+                        width="200" class="d-inline-block align-text-top">
+                </a>
+    
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+    
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Núcleos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <!-- Los núcleos se insertarán aquí -->
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="fincasDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Fincas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="fincasDropdown">
+                                <!-- Las fincas se insertarán aquí -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    
+    <!-- Marco central, aca se subdivide en columnas que son las que van a tener la información de la zona de trabajo -->
+<div class="container-fluid">
+    <h1 class="text-left mt-4">VISOR FORESTAL</h1>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-lg-8">
+                <div id="map" style="width: 100%; height: 75vh;"></div>
+            </div>
+            <div class="col-lg-4">
+                <div id="controls">
+                    <form>
+                        <div class="mb-3">
+                            <label for="layer-select" class="form-label">Seleccionar Capa:</label>
+                            <select id="layer-select" class="form-select">
+                                <option value="Parcelas_Yolombo_WGS84">Parcelas Yolombo</option>
+                                <option value="Dreanjes_Yolombo_WGS84">Drenajes Yolombo</option>
+                                <option value="Catastrales_Yolombo_WGS84">Catastrales Yolombo</option>
+                                <option value="Usos_Yolombo_WGS84">Usos Suelo Yolombo</option>
+                                <option value="default" selected>Selecciona Una Opción</option>
+                                <!-- Agrega más opciones según tus capas disponibles -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="filter-field-select" class="form-label">Seleccionar Campo de Filtro:</label>
+                            <select id="filter-field-select" class="form-select">
+                            <option value="default" selected>Selecciona Una Opción</option>
+                                <!-- Los campos se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="multiSelectField" class="form-label">Seleccionar Opciones Múltiples:</label>
+                            <select id="multiSelectField" multiple class="form-select">
+                            <option value="default" selected>Selecciona Una Opción</option>
+                                <!-- Las opciones se llenarán dinámicamente -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    
+
+
+
+
+<!-- Marco inferior: Todo lo que se coloque aquí debe estar después de la primera línea de código -->
+<footer class="bg-success text-white mt-5 p-3">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0">Cirpesdes de Colombia</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <img src="https://nucleosdemadera.com/wp-content/uploads/2023/02/cropped-LOGO-WEB-01.png" alt=""
+                    style="width: 100px;">
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+</div>
+
+<script>
+// Definir núcleos
+const nucleos = ['Yarumal', 'Yolombo', 'Caldas', 'Prado'];
+
+// Función para cargar elementos en el dropdown
+function cargarElementos(selector, items, callback) {
+    const dropdown = document.querySelector(selector).nextElementSibling;
+    dropdown.innerHTML = ''; // Limpiar elementos anteriores
+    items.forEach(item => {
+        let a = document.createElement('a');
+        a.classList.add('dropdown-item');
+        a.href = '#';
+        a.textContent = item;
+        a.onclick = () => callback(item);
+        dropdown.appendChild(a);
+    });
+}
+
+// Función para cargar fincas desde el servidor y mostrar en el mapa
+const zoomLevel = 13;
+
+function cargarFincasYMostrarEnMapa(nucleo) {
+    fetch(`/fincas/${nucleo}`)
+        .then(response => response.json())
+        .then(data => {
+            cargarElementos('#fincasDropdown', data, finca => {
+                const centroide = finca.centroide.coordinates;
+                mymap.setView([centroide[1], centroide[0]], zoomLevel);
+
+                L.popup()
+                    .setLatLng([centroide[1], centroide[0]])
+                    .setContent("Nombre de la finca: " + finca.finca)
+                    .openOn(mymap);
+            });
+        });
+}
+
+// Cargar núcleos al cargar la página
+window.onload = () => cargarElementos('#navbarDropdownMenuLink', nucleos, cargarFincasYMostrarEnMapa);
+
+//vamos aca
+
+ // Empieza carga de mapa
+var mymap = L.map('map').setView([6.730490372, -75.055143587], 12);
+var geoJsonLayer; // Esta variable mantendrá la capa actual de GeoJSON
+var rawData; // Almacenará los datos crudos de GeoJSON
+
+L.control.locate({ locateOptions: { maxZoom: 19, position: 'bottomright' } }).addTo(mymap);
+
+var OpenStreetMap_Mapnik = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(mymap);
+
+var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+});
+
+var Stadia_StamenWatercolor = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}', {
+    minZoom: 1,
+    maxZoom: 16,
+    attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    ext: 'jpg'
+});
+
+var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    maxZoom: 17,
+    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+
+var MiniMap = new L.Control.MiniMap(Esri_WorldImagery).addTo(mymap);
+
+document.getElementById('layer-select').addEventListener('change', function (e) {
+    var selectedLayer = e.target.value;
+    loadLayer(selectedLayer);
+    fetchFieldsForLayer(selectedLayer);
+});
+
+document.getElementById('filter-field-select').addEventListener('change', function (e) {
+    var selectedLayer = document.getElementById('layer-select').value;
+    var selectedField = e.target.value;
+    fetchValuesForField(selectedLayer, selectedField);
+});
+
+document.getElementById('multiSelectField').addEventListener('change', function () {
+    applyFilters();
+});
+
+function loadLayer(layerName) {
+    fetch(`/data/${layerName}`)
+        .then(response => response.json())
+        .then(data => {
+            rawData = data; // Almacenar datos crudos
+            applyFilters(); // Aplicar filtros a los nuevos datos
+        })
+        .catch(error => console.error('Error al cargar la capa:', error));
+}
+
+function fetchFieldsForLayer(layerName) {
+    fetch(`/fields/${layerName}`)
+        .then(response => response.json())
+        .then(fields => {
+            const fieldSelect = document.getElementById('filter-field-select');
+            fieldSelect.innerHTML = '';
+            fields.forEach(field => {
+                const option = document.createElement('option');
+                option.value = field;
+                option.text = field;
+                fieldSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error al cargar campos:', error));
+}
+
+function fetchValuesForField(layerName, fieldName) {
+    fetch(`/values/${layerName}/${fieldName}`)
+        .then(response => response.json())
+        .then(values => {
+            const multiSelectField = document.getElementById('multiSelectField');
+            multiSelectField.innerHTML = '';
+
+            values.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                multiSelectField.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error al cargar valores:', error));
+}
+
+function applyFilters() {
+    var selectedValues = Array.from(document.getElementById('multiSelectField').selectedOptions).map(option => option.value);
+    var selectedField = document.getElementById('filter-field-select').value;
+
+    // Eliminar la capa existente
+    if (geoJsonLayer) {
+        mymap.removeLayer(geoJsonLayer);
+    }
+
+    // Filtrar rawData y crear una nueva capa GeoJSON
+    var filteredData = rawData.features.filter(function (feature) {
+        return selectedValues.length === 0 || selectedValues.includes(feature.properties[selectedField]);
+    });
+
+    geoJsonLayer = L.geoJSON(filteredData, {
+        style: getGeometryStyle, // Asegúrate de aplicar los estilos aquí también
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, getGeometryStyle(feature));
+        },
+        onEachFeature: onEachFeature
+    }).addTo(mymap);
+}
+
+function onEachFeature(feature, layer) {
+    if (feature.properties) {
+        var popupContent = "<table class='popup-table'>";
+
+        for (var key in feature.properties) {
+            if (key !== 'geom' && key !== 'id') {
+                popupContent += `<tr><td>${key}</td><td>${feature.properties[key]}</td></tr>`;
+            }
+        }
+
+        popupContent += "</table>";
+        layer.bindPopup(popupContent, { maxWidth: "auto" });
+    }
+}
+
+loadLayer(document.getElementById('layer-select').value);
+
+var baseMaps = {
+    "OSM INK": OpenStreetMap_Mapnik,
+    "OSM_HOT": OpenStreetMap_HOT,
+    "Stadia Acuarela": Stadia_StamenWatercolor,
+    "OSM Topografia": OpenTopoMap,
+    "ESRI Imagen Satelital": Esri_WorldImagery,
+};
+
+// Capas superpuestas
+var overlayMaps = {};
+
+// Lista de capas que deseas omitir
+const capasOmitidas = ['spatial_ref_sys', 'geography_columns', 'geometry_columns']; // Reemplaza con los nombres de tus capas omitidas
+
+fetch('http://localhost:3000/lista_capas')
+    .then(response => response.json())
+    .then(listaCapas => {
+        listaCapas.forEach(nombreCapa => {
+            // Verificar si la capa no está en la lista de capas omitidas
+            if (!capasOmitidas.includes(nombreCapa)) {
+                // Crear una capa vacía inicialmente
+                overlayMaps[nombreCapa] = L.layerGroup();
+
+                // Agregar evento para cargar la capa cuando se seleccione
+                mymap.on('overlayadd', function (eventLayer) {
+                    if (eventLayer.name === nombreCapa) {
+                        // Cargar datos de la capa y añadirlos a la capa correspondiente
+                        fetch(`http://localhost:3000/data/${nombreCapa}`)
+                            .then(response => response.json())
+                            .then(datosCapa => {
+                                L.geoJSON(datosCapa, {
+                                    onEachFeature: function (feature, layer) {
+                                        // Configuraciones adicionales si necesarias
+                                    }
+                                }).addTo(overlayMaps[nombreCapa]);
+                            });
+                    }
+                });
+
+                // Agregar evento para remover la capa cuando se deseleccione
+                mymap.on('overlayremove', function (eventLayer) {
+                    if (eventLayer.name === nombreCapa) {
+                        overlayMaps[nombreCapa].clearLayers();
+                    }
+                });
+            }
+        });
+
+        // Agregar el control de capas al mapa
+        L.control.layers(baseMaps, overlayMaps, { collapsed: true }).addTo(mymap);
+    })
+    .catch(error => console.error('Error al cargar la lista de capas:', error));
+
+
+    // Estilos específicos//
+    function getGeometryStyle(feature) {
+        const geometryType = feature.geometry.type;
+        
+        switch (geometryType) {
+            case 'Point':
+                return { radius: 8, fillColor: "#ff7800", color: "#000", weight: 1, opacity: 1, fillOpacity: 0.8 };
+            case 'LineString':
+            case 'MultiLineString':
+                return { color: "#ff7800", weight: 3, opacity: 0.65 };
+            case 'Polygon':
+            case 'MultiPolygon':
+                return { fillColor: "#ff7800", color: "#000", weight: 2, opacity: 1, fillOpacity: 0.5 };
+            default:
+                return {}; // Estilo por defecto
+        }
+    }
+    
+    function loadLayer(layerName) {
+        fetch(`/data/${layerName}`)
+            .then(response => response.json())
+            .then(data => {
+                rawData = data; // Inicialización de rawData
+                if (geoJsonLayer) {
+                    mymap.removeLayer(geoJsonLayer);
+                }
+                const layerStyle = getLayerSpecificStyle(layerName);
+                geoJsonLayer = L.geoJSON(data, {
+                    style: feature => layerStyle(feature) || getGeometryStyle(feature),
+                    pointToLayer: (feature, latlng) => L.circleMarker(latlng, getGeometryStyle(feature)),
+                    onEachFeature: onEachFeature
+                }).addTo(mymap);
+            })
+            .catch(error => console.error('Error al cargar la capa:', error));
+    }
+    
+    function getLayerSpecificStyle(layerName) {
+        const specificStyles = {
+            'Parcelas_Yolombo_WGS84': feature => ({
+                pane: 'pane_Parcelas_Yolombo_WGS84_3',
+                radius: 8.0,
+                opacity: 1,
+                // ... otros estilos
+            }),
+            'Dreanjes_Yolombo_WGS84': feature => ({
+                pane: 'pane_Dreanjes_Yolombo_WGS84_4',
+                opacity: 1,
+                // ... otros estilos
+            }),
+            'Catastrales_Yolombo_WGS84': style_Catastrales_Yolombo_WGS84_0_0,
+            'linderos': style_linderos_2_0,
+            'Usos_Yolombo_WGS84': style_Usos_Yolombo_WGS84_1_0
+        };
+    
+        return specificStyles[layerName] || (() => ({})); // Devolver una función de estilo vacía por defecto
+    }
+    
+    function style_Catastrales_Yolombo_WGS84_0_0(feature) {
+        const matricula = String(feature.properties['matricula']);
+        
+        switch (matricula) {
+            case '038-0002746':
+            case '038-0002747':
+                return {
+                    opacity: 1,
+                    color: 'rgba(35,35,35,1.0)',
+                    // ... otros estilos para casos específicos
+                };
+            default:
+                return {
+                    opacity: 1,
+                    color: 'rgba(35,35,35,1.0)',
+                    // ... otros estilos por defecto
+                };
+        }
+    }
+    
+    function style_linderos_2_0(feature) {
+        return {
+            pane: 'pane_linderos_2',
+            opacity: 1,
+            color: 'rgba(225,25,215,1.0)',
+            // ... otros estilos
+        };
+    }
+    
+    function style_Usos_Yolombo_WGS84_1_0(feature) {
+        const especie = String(feature.properties['especie']);
+        // ... casos específicos
+        return {
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            // ... otros estilos por defecto
+        };
+    }
+    
+    // Resto del código...
+    
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+
+<!-- // Minimapa -->
+<script src="Leaflet-MiniMap-master/dist/Control.MiniMap.min.js"></script>
+
+<script>
+    // Tu código JavaScript que utiliza Leaflet, como crear capas de mapa
+    const carto_light = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        // opciones
+    });
+</script>
+
+</body>
+
+
+
+
+</html>
